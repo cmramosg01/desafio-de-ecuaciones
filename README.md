@@ -1,2 +1,2 @@
 # Desafio-de-ecuaciones
-Juego interactivo para practicar ecuaciones de 1º de ESO
+Juego interactivo para practicar ecuaciones de primer grado en 1º de ESO.
