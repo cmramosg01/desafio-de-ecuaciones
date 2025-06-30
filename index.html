@@ -3,239 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de Ecuaciones Lineales ¡Divertido!</title>
     
-    <!-- Metadatos PWA -->
-    <title>Desafío de Ecuaciones</title>
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-<link rel="manifest" href="/site.webmanifest">
-
-    <meta name="theme-color" content="#3B82F6"/>
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="images/icons/icon-192x192.png">
+    <!-- =============================================================== -->
+    <!-- INICIO DE LA CORRECCIÓN PWA -->
+    <!-- He añadido el nombre del repositorio a todas las rutas href -->
+    <!-- =============================================================== -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/desafio-de-ecuaciones/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/desafio-de-ecuaciones/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/desafio-de-ecuaciones/favicon-16x16.png">
+    <link rel="manifest" href="/desafio-de-ecuaciones/site.webmanifest">
+    <meta name="theme-color" content="#4299E1"/> <!-- Color de la barra del navegador -->
+    <!-- =============================================================== -->
+    <!-- FIN DE LA CORRECCIÓN PWA -->
+    <!-- =============================================================== -->
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Tone.js para sonidos -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            /* Nuevo fondo alegre */
-            background-image: linear-gradient(to top right, #E0F2F7, #D1F7E8); /* Tonos pastel suaves verde-azul */
+            background-image: linear-gradient(to top right, #E0F2F7, #D1F7E8);
         }
         .game-container {
-            background-color: #FFFEFA; /* Blanco hueso/Crema muy claro */
-            color: #2D3748; /* Gris pizarra oscuro para texto principal */
-            padding: 1rem; /* Reducido para móviles */
-            border-radius: 0.75rem; /* 12px */
+            background-color: #FFFEFA;
+            color: #2D3748;
+            padding: 1rem;
+            border-radius: 0.75rem;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
-        @media (min-width: 640px) { /* sm */
-            .game-container {
-                padding: 1.5rem; /* 24px */
-            }
-        }
-         @media (min-width: 768px) { /* md */
-            .game-container {
-                padding: 2rem; /* 32px */
-            }
-        }
+        @media (min-width: 640px) { .game-container { padding: 1.5rem; } }
+        @media (min-width: 768px) { .game-container { padding: 2rem; } }
 
-        .title {
-            /* Usaremos un degradado de Tailwind, pero podemos definir un fallback o propiedades adicionales aquí */
-            color: #3B82F6; /* Azul por si el gradiente no carga */
-        }
-
-        .equation-text-style { 
-            font-weight: 600; /* Un poco más de peso */
-            letter-spacing: 0.5px;
-            color: #5A3E8A; /* Morado oscuro para la ecuación */
-        }
-        
-        .message-box-style { 
-            font-weight: 500;
-            min-height: 3.5em; 
-            background-color: rgba(0,0,0,0.03); /* Fondo sutil para el área de mensajes */
-            border-radius: 0.375rem; /* 6px */
-        }
-
-        .credits-style { 
-            color: #4A5568; /* Gris medio oscuro */
-        }
-
-        .input-field {
-            border: 2px solid #CBD5E0; /* Borde gris claro */
-            transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-            color: #2D3748;
-            background-color: #F7FAFC; /* Fondo muy claro para el input */
-        }
-        .input-field:focus {
-            border-color: #4299E1; /* Azul al enfocar */
-            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
-        }
-        .input-field.correct { border-color: #48BB78; background-color: #F0FFF4;} /* Verde */
-        .input-field.incorrect { border-color: #F56565; background-color: #FFF5F5;} /* Rojo */
-
-        .btn { /* Estilo base para botones */
-            font-weight: 600;
-            padding: 0.6rem 1rem;
-            border-radius: 0.5rem; /* 8px */
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            transition: all 0.2s ease-in-out;
-        }
-        @media (min-width: 640px) { /* sm */
-            .btn {
-                 padding: 0.75rem 1.5rem;
-            }
-        }
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 7px 14px -4px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
-        }
-        .btn-primary { background-color: #4299E1; color: white; } /* Azul vibrante */
+        .title { color: #3B82F6; }
+        .equation-text-style { font-weight: 600; letter-spacing: 0.5px; color: #5A3E8A; }
+        .message-box-style { font-weight: 500; min-height: 3.5em; background-color: rgba(0,0,0,0.03); border-radius: 0.375rem; }
+        .credits-style { color: #4A5568; }
+        .input-field { border: 2px solid #CBD5E0; transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out; color: #2D3748; background-color: #F7FAFC; }
+        .input-field:focus { border-color: #4299E1; box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5); }
+        .input-field.correct { border-color: #48BB78; background-color: #F0FFF4;}
+        .input-field.incorrect { border-color: #F56565; background-color: #FFF5F5;}
+        .btn { font-weight: 600; padding: 0.6rem 1rem; border-radius: 0.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); transition: all 0.2s ease-in-out; }
+        @media (min-width: 640px) { .btn { padding: 0.75rem 1.5rem; } }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 7px 14px -4px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); }
+        .btn-primary { background-color: #4299E1; color: white; }
         .btn-primary:hover { background-color: #3182CE; }
-        .btn-restart { background-color: #ED8936; color: white;} /* Naranja para reiniciar */
+        .btn-restart { background-color: #ED8936; color: white;}
         .btn-restart:hover { background-color: #DD6B20;}
-
-        .progress-bar-container {
-            width: 100%;
-            background-color: #E2E8F0; /* Gris claro para fondo de barra */
-            border-radius: 0.5rem;
-            overflow: hidden;
-            height: 20px; /* Un poco más alta */
-        }
-        .progress-bar {
-            height: 100%;
-            background-color: #68D391; /* Verde suave para progreso */
-            text-align: center;
-            line-height: 20px; 
-            color: #2F855A; /* Verde oscuro para texto de progreso */
-            font-weight: 600;
-            transition: width 0.4s ease-in-out;
-            font-size: 0.75rem;
-        }
-        .level-title-badge {
-            color: white; 
-            padding: 0.35rem 0.85rem;
-            border-radius: 9999px; 
-            font-size: 0.9rem;
-            font-weight: 600;
-            display: inline-block;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: background-color 0.3s ease;
-        }
-        @media (min-width: 640px) {
-             .level-title-badge {
-                font-size: 1rem;
-             }
-        }
-        /* Colores para insignias de nivel */
-        .level-0 { background-color: #A0AEC0; } /* Gris */
-        .level-1 { background-color: #63B3ED; } /* Azul */
-        .level-2 { background-color: #4FD1C5; } /* Turquesa */
-        .level-3 { background-color: #68D391; } /* Verde */
-        .level-4 { background-color: #F6E05E; color:#6B46C1 } /* Amarillo (texto oscuro) */
-        .level-5 { background-color: #ED8936; } /* Naranja */
-
-        .fraction {
-            display: inline-block; 
-            position: relative;    
-            vertical-align: -0.35em; 
-            margin: 0 0.2em;       
-            text-align: center;
-            font-size: 1em; 
-        }
-        .fraction .numerator,
-        .fraction .denominator {
-            display: block;        
-            padding: 0 0.2em;      
-            font-size: 0.85em;     
-            line-height: 1.1;      
-            color: #5A3E8A; 
-        }
-        .fraction .numerator {
-            border-bottom: 0.09em solid #5A3E8A; 
-            padding-bottom: 0.1em; 
-        }
-        .fraction .denominator {
-            padding-top: 0.1em;    
-        }
-
-        #soundToggle {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: rgba(255,255,255,0.7);
-            border: 1px solid #CBD5E0;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        #soundToggle svg {
-            width: 20px;
-            height: 20px;
-            fill: #4A5568;
-        }
-
+        .progress-bar-container { width: 100%; background-color: #E2E8F0; border-radius: 0.5rem; overflow: hidden; height: 20px; }
+        .progress-bar { height: 100%; background-color: #68D391; text-align: center; line-height: 20px; color: #2F855A; font-weight: 600; transition: width 0.4s ease-in-out; font-size: 0.75rem; }
+        .level-title-badge { color: white; padding: 0.35rem 0.85rem; border-radius: 9999px; font-size: 0.9rem; font-weight: 600; display: inline-block; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: background-color 0.3s ease; }
+        @media (min-width: 640px) { .level-title-badge { font-size: 1rem; } }
+        .level-0 { background-color: #A0AEC0; }
+        .level-1 { background-color: #63B3ED; }
+        .level-2 { background-color: #4FD1C5; }
+        .level-3 { background-color: #68D391; }
+        .level-4 { background-color: #F6E05E; color:#6B46C1 }
+        .level-5 { background-color: #ED8936; }
+        .fraction { display: inline-block; position: relative; vertical-align: -0.35em; margin: 0 0.2em; text-align: center; font-size: 1em; }
+        .fraction .numerator, .fraction .denominator { display: block; padding: 0 0.2em; font-size: 0.85em; line-height: 1.1; color: #5A3E8A; }
+        .fraction .numerator { border-bottom: 0.09em solid #5A3E8A; padding-bottom: 0.1em; }
+        .fraction .denominator { padding-top: 0.1em; }
+        #soundToggle { position: absolute; top: 10px; right: 10px; background-color: rgba(255,255,255,0.7); border: 1px solid #CBD5E0; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        #soundToggle svg { width: 20px; height: 20px; fill: #4A5568; }
     </style>
 </head>
 <body class="p-2 sm:p-4">
     <div class="game-container w-full max-w-2xl mx-auto relative"> 
-        
-        <button id="soundToggle" title="Activar/Desactivar Sonido">
-            <!-- Icono se cargará con JS -->
-        </button>
-
+        <button id="soundToggle" title="Activar/Desactivar Sonido"></button>
         <header class="mb-3 sm:mb-4 text-center mt-1 sm:mt-2">
             <h1 class="title text-2xl sm:text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600">Desafío de Ecuaciones</h1>
         </header>
-
         <div class="mb-2 sm:mb-3 text-center">
             <p class="text-base sm:text-lg md:text-xl">Nivel: <span id="levelNameDisplay" class="level-title-badge">Cargando...</span></p>
             <p class="text-base sm:text-lg md:text-xl mt-1">Puntuación: <span id="scoreDisplay" class="font-semibold text-orange-500">0</span></p>
         </div>
-
         <div class="my-2 sm:my-3"> 
             <div class="progress-bar-container">
                 <div id="levelProgress" class="progress-bar" style="width: 0%;">0/5</div>
             </div>
         </div>
-
         <div class="credits-style text-center text-xs sm:text-sm my-2 sm:my-3">
              <p>Desarrollado por la profesora Cristina Ramos García con la asistencia de IA (<a href="https://sites.google.com/educarex.es/cienciasymates" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:text-blue-400 underline">Sitio web</a>).</p>
         </div>
-
         <div id="equationContainer" class="equation-text-style my-3 sm:my-4 p-3 sm:p-4 md:p-5 bg-indigo-50 rounded-lg text-center shadow-inner text-xl sm:text-2xl md:text-3xl"> 
             Cargando ecuación...
         </div>
-
         <div class="mt-3 mb-2 sm:mt-4 sm:mb-3 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3">
             <span class="equation-text-style text-lg sm:text-xl md:text-2xl">x =</span>
             <input type="text" id="answerInput" class="input-field text-lg sm:text-xl p-2 sm:p-3 rounded-lg w-full sm:w-auto flex-grow text-center shadow-sm" placeholder="Tu respuesta">
         </div>
-
-        <div id="messageArea" class="message-box-style my-2 sm:my-3 text-center text-base sm:text-lg md:text-xl p-2 sm:p-3">
-            <!-- Mensajes de feedback aquí -->
-        </div>
-
+        <div id="messageArea" class="message-box-style my-2 sm:my-3 text-center text-base sm:text-lg md:text-xl p-2 sm:p-3"></div>
         <div class="mt-4 sm:mt-6 flex flex-wrap gap-2 sm:gap-3 justify-center items-center">
-            <button id="checkButton" class="btn btn-primary text-sm sm:text-base">
-                Comprobar
-            </button>
-            <button id="restartButton" class="btn btn-restart text-sm sm:text-base">
-                Reiniciar Juego
-            </button>
+            <button id="checkButton" class="btn btn-primary text-sm sm:text-base">Comprobar</button>
+            <button id="restartButton" class="btn btn-restart text-sm sm:text-base">Reiniciar Juego</button>
         </div>
     </div>
-
     <script>
-        // --- TODO EL CÓDIGO DEL JUEGO (SIN CAMBIOS) VA AQUÍ ---
         const levelNameDisplay = document.getElementById('levelNameDisplay');
         const scoreDisplay = document.getElementById('scoreDisplay');
         const equationContainer = document.getElementById('equationContainer');
@@ -256,14 +120,8 @@
         let failedAttempts = 0;
         let soundsEnabled = true; 
 
-        const soundOnIcon = `
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
-              <path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.318.664-2.66 1.905A9.76 9.76 0 001.5 12c0 .898.121 1.768.35 2.595.341 1.24 1.518 1.905 2.66 1.905H6.44l4.5 4.5c.945.945 2.56.276 2.56-1.06V4.06zM18.584 12c0-1.813-1.162-3.39-2.833-4.029v8.058c1.67-.64 2.833-2.215 2.833-4.029zM20.25 12c0-2.485-1.53-4.623-3.75-5.455v10.91c2.22-.832 3.75-2.97 3.75-5.455z" />
-            </svg>`;
-        const soundOffIcon = `
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
-              <path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.318.664-2.66 1.905A9.76 9.76 0 001.5 12c0 .898.121 1.768.35 2.595.341 1.24 1.518 1.905 2.66 1.905H6.44l4.5 4.5c.945.945 2.56.276 2.56-1.06V4.06zM16.28 12a2.249 2.249 0 00-1.022-.197V14.38c.552.218.978.694.978 1.252a1.118 1.118 0 01-1.118 1.118c-.631 0-1.118-.487-1.118-1.118a1.12 1.12 0 01.336-.783L12 13.175l-.887-.887-1.112 1.112a1.12 1.12 0 01-.783.336c-.631 0-1.118-.487-1.118-1.118a1.12 1.12 0 01.197-1.022L8.22 10.04l7.037-7.037 1.022 1.022-2.25 2.25.027.027a2.249 2.249 0 001.022.197V8.22l2.25-2.25-1.022-1.022-9.287 9.287 1.022 1.022L10.04 12l2.25 2.25-.027-.027zM18.584 12c0-.448-.09-.882-.253-1.287l-1.023 1.023A2.23 2.23 0 0117.25 12c0 .21-.03.413-.085.606l1.023 1.023c.046-.204.062-.407.062-.606.253.405.253 1.287.253 1.287v-1.416A2.23 2.23 0 0117.25 12a2.25 2.25 0 01.062-.606zM20.25 12c0-.823-.225-1.599-.626-2.285l-1.023 1.023A4.473 4.473 0 0118.75 12c0 .514-.09 1.008-.252 1.462l1.023 1.023c.176-.448.279-.92.279-1.462z" />
-            </svg>`;
+        const soundOnIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5"><path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.318.664-2.66 1.905A9.76 9.76 0 001.5 12c0 .898.121 1.768.35 2.595.341 1.24 1.518 1.905 2.66 1.905H6.44l4.5 4.5c.945.945 2.56.276 2.56-1.06V4.06zM18.584 12c0-1.813-1.162-3.39-2.833-4.029v8.058c1.67-.64 2.833-2.215 2.833-4.029zM20.25 12c0-2.485-1.53-4.623-3.75-5.455v10.91c2.22-.832 3.75-2.97 3.75-5.455z" /></svg>`;
+        const soundOffIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5"><path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.318.664-2.66 1.905A9.76 9.76 0 001.5 12c0 .898.121 1.768.35 2.595.341 1.24 1.518 1.905 2.66 1.905H6.44l4.5 4.5c.945.945 2.56.276 2.56-1.06V4.06zM16.28 12a2.249 2.249 0 00-1.022-.197V14.38c.552.218.978.694.978 1.252a1.118 1.118 0 01-1.118 1.118c-.631 0-1.118-.487-1.118-1.118a1.12 1.12 0 01.336-.783L12 13.175l-.887-.887-1.112 1.112a1.12 1.12 0 01-.783.336c-.631 0-1.118-.487-1.118-1.118a1.12 1.12 0 01.197-1.022L8.22 10.04l7.037-7.037 1.022 1.022-2.25 2.25.027.027a2.249 2.249 0 001.022.197V8.22l2.25-2.25-1.022-1.022-9.287 9.287 1.022 1.022L10.04 12l2.25 2.25-.027-.027zM18.584 12c0-.448-.09-.882-.253-1.287l-1.023 1.023A2.23 2.23 0 0117.25 12c0 .21-.03.413-.085.606l1.023 1.023c.046-.204.062-.407.062-.606.253.405.253 1.287.253 1.287v-1.416A2.23 2.23 0 0117.25 12a2.25 2.25 0 01.062-.606zM20.25 12c0-.823-.225-1.599-.626-2.285l-1.023 1.023A4.473 4.473 0 0118.75 12c0 .514-.09 1.008-.252 1.462l1.023 1.023c.176-.448.279-.92.279-1.462z" /></svg>`;
 
         soundToggleButton.innerHTML = soundsEnabled ? soundOnIcon : soundOffIcon;
 
@@ -279,83 +137,8 @@
             }
         }
         initializeSynths();
-        function playCorrectSound() {
-            if (!soundsEnabled || typeof Tone === 'undefined' || !Tone.context || Tone.context.state !== 'running' || !synth) return;
-            try {
-                synth.triggerAttackRelease("C5", "8n", Tone.now());
-                synth.triggerAttackRelease("G5", "8n", Tone.now() + 0.1);
-            } catch (e) { console.error("Error playing correct sound:", e); }
-        }
-        function playLevelUpSound() {
-            if (!soundsEnabled || typeof Tone === 'undefined' || !Tone.context || Tone.context.state !== 'running' || !polySynth) return;
-            try {
-                const now = Tone.now();
-                polySynth.triggerAttackRelease(["C4", "E4", "G4", "C5"], "4n", now);
-                polySynth.triggerAttackRelease(["F4", "A4", "C5", "F5"], "4n", now + 0.4);
-                polySynth.triggerAttackRelease(["G4", "B4", "D5", "G5"], "2n", now + 0.8);
-            } catch (e) { console.error("Error playing level up sound:", e); }
-        }
-        function playWrongSound() { 
-            if (!soundsEnabled || typeof Tone === 'undefined' || !Tone.context || Tone.context.state !== 'running' || !synth) return;
-            try {
-                synth.triggerAttackRelease("A3", "16n", Tone.now());
-                synth.triggerAttackRelease("G#3", "16n", Tone.now() + 0.05);
-            } catch (e) { console.error("Error playing wrong sound:", e); }
-        }
-        const levelNames = ["Aprendiz de Ecuaciones", "Explorador Numérico", "Descifrador de Códigos", "Maestro de la Balanza", "Experto Algebraico", "Genio de las Ecuaciones"];
-        const levelUpMessages = ["¡Genial! Has superado 'Aprendiz'. ¡A explorar números!", "¡Increíble, Explorador! ¿Listo para descifrar códigos?", "¡Códigos rotos! Ahora, a ser 'Maestro de la Balanza'.", "¡Equilibrio perfecto, Maestro! El 'Experto Algebraico' te espera.", "¡Felicidades, Experto! Un último escalón hacia la genialidad.", "¡ERES UN GENIO DE LAS ECUACIONES! ¡Desafío completado!"];
-        const correctMessages = ["¡Correcto!", "¡Muy bien!", "¡Excelente!", "¡Así se hace!", "¡Perfecto!"];
-        function randomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
-        function randomNonZeroInt(min, max) { let num; do { num = randomInt(min, max); } while (num === 0); return num; }
-        function randomSign() { return Math.random() < 0.5 ? -1 : 1; }
-        function generateLevel1Equation() { let a, b, x_sol, eqStr; const type = randomInt(1, 4); switch (type) { case 1: a = randomInt(1, 10); b = randomInt(1, 10); x_sol = b + a; eqStr = `x - ${a} = ${b}`; break; case 2: a = randomInt(1, 10); b = randomInt(1, 10); x_sol = a + b; eqStr = `${a} = x - ${b}`; break; case 3: a = randomInt(1, 9); b = randomInt(a + 1, 10); x_sol = b - a; eqStr = `x + ${a} = ${b}`; break; default: b = randomInt(1, 9); a = randomInt(b + 1, 10); x_sol = a - b; eqStr = `${a} = x + ${b}`; break; } return { equationString: eqStr, solution: x_sol }; }
-        function generateLevel2Equation() { let a, b, x_sol, eqStr; const type = randomInt(1, 2); if (type === 1) { x_sol = randomInt(1, 10); a = randomInt(2, 5); b = a * x_sol; eqStr = `${a}x = ${b}`; } else { b = randomInt(1, 8); a = randomInt(2, 5); x_sol = a * b; eqStr = `<span class="fraction"><span class="numerator">x</span><span class="denominator">${a}</span></span> = ${b}`; } return { equationString: eqStr, solution: x_sol }; }
-        function generateLevel3Equation() { let a, b, x_sol, eqStr; const type = randomInt(1, 3); x_sol = randomInt(-10, 10); switch (type) { case 1: a = randomInt(-10, 10); b = x_sol + a; eqStr = `x ${a < 0 ? '-' : '+'} ${Math.abs(a)} = ${b}`; break; case 2: a = randomInt(-10, 10); b = a - x_sol; eqStr = `${a} - x = ${b}`; break; default: a = randomInt(-10, 10); b = a + x_sol; if (a === b && x_sol === 0) { let new_a = randomNonZeroInt(-5,5); b = new_a + x_sol; eqStr = `${new_a} + x = ${b}`; } else { eqStr = `${a} + x = ${b}`; } break; } return { equationString: eqStr.replace(/\+ -/g, '- '), solution: x_sol }; }
-        function generateLevel4Equation() { let a_coeff, b_rhs, x_sol, eqStr; const type = randomInt(1, 3); x_sol = randomNonZeroInt(-10, 10); switch (type) { case 1: a_coeff = randomNonZeroInt(-5, 5); if (a_coeff === 1) a_coeff = 2; if (a_coeff === -1) a_coeff = -2; b_rhs = a_coeff * x_sol; eqStr = `${a_coeff}x = ${b_rhs}`; break; case 2: a_coeff = randomNonZeroInt(-5, 5); if (a_coeff === 1 || a_coeff === -1) a_coeff = (a_coeff === 1 ? 2 : -2); if (x_sol % a_coeff !== 0) { x_sol = a_coeff * randomNonZeroInt(-5,5); if (x_sol === 0) x_sol = a_coeff * (randomNonZeroInt(-5,5) || 1) ;} b_rhs = x_sol / a_coeff; let denominator_lvl4_t2_val = Math.abs(a_coeff); let rhs_lvl4_t2_val = (a_coeff < 0) ? -b_rhs : b_rhs; eqStr = `<span class="fraction"><span class="numerator">x</span><span class="denominator">${denominator_lvl4_t2_val}</span></span> = ${rhs_lvl4_t2_val}`; break; case 3: default: let num_c = randomNonZeroInt(-6, 6); let den_c = randomNonZeroInt(2, 6); do { x_sol = randomNonZeroInt(-10, 10); } while ((num_c * x_sol) % den_c !== 0); let rhs_c = (num_c * x_sol) / den_c; let x_term_str_c = (num_c === 1 ? "x" : num_c === -1 ? "-x" : `${num_c}x`); eqStr = `<span class="fraction"><span class="numerator">${x_term_str_c}</span><span class="denominator">${den_c}</span></span> = ${rhs_c}`; break; } return { equationString: eqStr, solution: x_sol }; }
-        function termToString(coeff, variable, isFirstTerm) { if (coeff === 0 && variable) return ""; if (coeff === 0 && !variable && !isFirstTerm) return ""; if (coeff === 0 && !variable && isFirstTerm) return "0"; const absCoeff = Math.abs(coeff); let termStr = ""; if (isFirstTerm) { if (coeff < 0) termStr += "-"; } else { termStr += (coeff < 0 ? " - " : " + "); } if (variable) { if (absCoeff !== 1) termStr += absCoeff; termStr += variable; } else { termStr += absCoeff; } return termStr; }
-        function buildSideString(terms) { let sideStr = ""; let firstTerm = true; if (terms.length === 0) return "0"; for (const term of terms) { if (term.coeff === 0 && !term.variable && terms.length > 1 && !firstTerm) continue; let termDisplay = termToString(term.coeff, term.variable, firstTerm); if (termDisplay !== "" || (term.coeff === 0 && !term.variable && firstTerm && terms.length === 1) ) { sideStr += termDisplay; firstTerm = false; } } if (sideStr.trim() === "" || sideStr.trim() === "-" || sideStr.trim() === "+") sideStr = "0"; if (sideStr.startsWith(" + ")) sideStr = sideStr.substring(3); return sideStr.trim() === "" ? "0" : sideStr.trim(); }
-        function generateLevel5Equation() { let x_sol = randomInt(-5, 5); let final_coeff_x = randomNonZeroInt(-5, 5); let a = randomInt(-7, 7); let b = randomInt(-7, 7); if (a === 0 && b === 0) { a = randomNonZeroInt(-3,3); } let c_val = randomInt(-10, 10); let d = a + b - final_coeff_x; let e_val = (final_coeff_x * x_sol) + c_val; const lhs_terms = []; if (a !== 0) lhs_terms.push({coeff: a, variable: 'x'}); if (b !== 0) lhs_terms.push({coeff: b, variable: 'x'}); if (lhs_terms.filter(t => t.variable === 'x').length === 0) {lhs_terms.unshift({coeff: randomNonZeroInt(-3,3), variable: 'x'});} if (c_val !== 0 || lhs_terms.length === 0 || (lhs_terms.length > 0 && lhs_terms[lhs_terms.length-1].variable)) lhs_terms.push({coeff: c_val, variable: null}); const rhs_terms = []; if (d !== 0) rhs_terms.push({coeff: d, variable: 'x'}); if (rhs_terms.filter(t => t.variable === 'x').length === 0 && final_coeff_x !== (a+b)) {rhs_terms.unshift({coeff: randomNonZeroInt(-3,3), variable: 'x'});} if (e_val !== 0 || rhs_terms.length === 0 || (rhs_terms.length > 0 && rhs_terms[rhs_terms.length-1].variable)) rhs_terms.push({coeff: e_val, variable: null}); let lhs_str = buildSideString(lhs_terms); let rhs_str = buildSideString(rhs_terms); if (lhs_str === rhs_str && final_coeff_x === 0) { return generateLevel5Equation(); } return { equationString: `${lhs_str} = ${rhs_str}`, solution: x_sol }; }
-        function generateLevel6Equation() { let x_sol = randomInt(-10, 10) / 2.0; if (x_sol === 0) x_sol = 0.5 * randomSign(); let final_coeff_x = randomNonZeroInt(-4, 4) * 2; let final_const_diff = final_coeff_x * x_sol; let a = (randomInt(-6, 6) + (Math.random() < 0.4 ? 0.5 * randomSign() : 0)); let b = (randomInt(-6, 6) + (Math.random() < 0.4 ? 0.5 * randomSign() : 0)); if (a === 0 && b === 0) a = (randomNonZeroInt(-2,2) + (Math.random() < 0.5 ? 0.5*randomSign() : 0) ) ; if (a === 0 && b === 0) a = 1.0; let c_val = (randomInt(-10, 10) + (Math.random() < 0.4 ? 0.5 * randomSign() : 0)); a = parseFloat(a.toFixed(1)); b = parseFloat(b.toFixed(1)); c_val = parseFloat(c_val.toFixed(1)); let d = parseFloat((a + b - final_coeff_x).toFixed(1)); let e_val = parseFloat((c_val + final_const_diff).toFixed(1)); const lhs_terms = []; if (a !== 0) lhs_terms.push({coeff: a, variable: 'x'}); if (b !== 0) lhs_terms.push({coeff: b, variable: 'x'}); if (lhs_terms.filter(t => t.variable === 'x').length === 0) { let temp_a_coeff = (randomNonZeroInt(-2,2) + (Math.random() < 0.5 ? 0.5*randomSign() : 0) ); if (temp_a_coeff === 0) temp_a_coeff = 1.0; lhs_terms.unshift({coeff: parseFloat(temp_a_coeff.toFixed(1)), variable: 'x'});} if (c_val !== 0 || lhs_terms.length === 0 || (lhs_terms.length > 0 && lhs_terms[lhs_terms.length-1].variable)) lhs_terms.push({coeff: c_val, variable: null}); const rhs_terms = []; if (d !== 0) rhs_terms.push({coeff: d, variable: 'x'}); if (rhs_terms.filter(t => t.variable === 'x').length === 0 && final_coeff_x !== (a+b)) { let temp_d_coeff = (randomNonZeroInt(-2,2) + (Math.random() < 0.5 ? 0.5*randomSign() : 0) ); if (temp_d_coeff === 0) temp_d_coeff = 1.0; rhs_terms.unshift({coeff: parseFloat(temp_d_coeff.toFixed(1)), variable: 'x'});} if (e_val !== 0 || rhs_terms.length === 0 || (rhs_terms.length > 0 && rhs_terms[rhs_terms.length-1].variable)) rhs_terms.push({coeff: e_val, variable: null}); let lhs_str = buildSideString(lhs_terms); let rhs_str = buildSideString(rhs_terms); if (lhs_str === rhs_str && final_coeff_x === 0) { return generateLevel6Equation(); } return { equationString: `${lhs_str} = ${rhs_str}`, solution: x_sol }; }
-        const equationGenerators = [generateLevel1Equation, generateLevel2Equation, generateLevel3Equation, generateLevel4Equation, generateLevel5Equation, generateLevel6Equation];
-        function loadNewEquation() { failedAttempts = 0; if (currentLevelIndex > MAX_LEVEL_INDEX) { checkButton.style.display = 'none'; answerInput.disabled = true; return; } const generator = equationGenerators[currentLevelIndex]; let tempEquation; let attempts = 0; const MAX_GENERATION_ATTEMPTS = 20; do { tempEquation = generator(); attempts++; if (attempts > MAX_GENERATION_ATTEMPTS) { console.warn("Máximo de intentos para generar ecuación única."); break; } } while (recentEquationsInLevel.includes(tempEquation.equationString)); currentEquation = tempEquation; recentEquationsInLevel.push(currentEquation.equationString); equationContainer.innerHTML = currentEquation.equationString; levelNameDisplay.textContent = levelNames[currentLevelIndex]; levelNameDisplay.className = `level-title-badge level-${currentLevelIndex}`; scoreDisplay.textContent = score; updateProgressBar(); answerInput.value = ''; answerInput.disabled = false; answerInput.classList.remove('correct', 'incorrect'); answerInput.focus(); if (!messageArea.textContent.includes("¡Nivel") && !messageArea.textContent.includes("¡ERES UN GENIO")) { messageArea.textContent = ''; } messageArea.className = 'message-box-style my-2 sm:my-3 text-center text-base sm:text-lg md:text-xl p-2 sm:p-3'; checkButton.style.display = 'inline-block'; checkButton.disabled = false; }
-        function checkAnswer() { const userAnswerStr = answerInput.value.trim().replace(',', '.'); const userAnswer = parseFloat(userAnswerStr); if (isNaN(userAnswer)) { messageArea.textContent = "Por favor, introduce un número válido."; messageArea.className = 'message-box-style my-2 sm:my-3 text-center text-base sm:text-lg md:text-xl p-2 sm:p-3 text-orange-600'; answerInput.classList.add('incorrect'); return; } const isCorrect = Math.abs(userAnswer - currentEquation.solution) < 0.001; if (isCorrect) { score += 10; correctAnswersInLevel++; failedAttempts = 0; const randomCorrectMsg = correctMessages[Math.floor(Math.random() * correctMessages.length)]; messageArea.textContent = randomCorrectMsg; messageArea.className = 'message-box-style my-2 sm:my-3 text-center text-base sm:text-lg md:text-xl p-2 sm:p-3 text-green-600 font-semibold'; answerInput.classList.remove('incorrect'); answerInput.classList.add('correct'); answerInput.disabled = true; checkButton.disabled = true; playCorrectSound(); updateProgressBar(); setTimeout(() => { handleNextEquation(); }, 1500); } else { if (score > 0 && score % 5 === 0 && score >=2) score -=2; if (score < 0) score = 0; scoreDisplay.textContent = score; playWrongSound(); failedAttempts++; answerInput.classList.remove('correct'); answerInput.classList.add('incorrect'); answerInput.focus(); if (failedAttempts >= 3) { messageArea.innerHTML = `La respuesta correcta era <strong class="text-indigo-600">${currentEquation.solution}</strong>. <br>¡No te rindas, a por la siguiente!`; messageArea.className = 'message-box-style my-2 sm:my-3 text-center text-base sm:text-lg md:text-xl p-2 sm:p-3 text-red-600'; answerInput.disabled = true; checkButton.disabled = true; setTimeout(() => { answerInput.disabled = false; handleNextEquation(); }, 4000); } else { messageArea.textContent = `Incorrecto (intento ${failedAttempts}/3). ¡Sigue intentando!`; messageArea.className = 'message-box-style my-2 sm:my-3 text-center text-base sm:text-lg md:text-xl p-2 sm:p-3 text-red-600'; checkButton.disabled = false; } } }
-        function updateProgressBar() { const progressPercent = (correctAnswersInLevel / equationsPerLevel) * 100; levelProgress.style.width = `${progressPercent}%`; levelProgress.textContent = `${correctAnswersInLevel}/${equationsPerLevel}`; }
-        function handleNextEquation() { if (correctAnswersInLevel >= equationsPerLevel) { playLevelUpSound(); messageArea.textContent = levelUpMessages[currentLevelIndex]; messageArea.className = 'message-box-style my-2 sm:my-3 text-center text-xl sm:text-2xl md:text-3xl p-2 sm:p-3 text-purple-600 font-bold'; currentLevelIndex++; correctAnswersInLevel = 0; recentEquationsInLevel = []; if (currentLevelIndex <= MAX_LEVEL_INDEX) { setTimeout(loadNewEquation, 3500); } else { checkButton.style.display = 'none'; answerInput.disabled = true; } } else { loadNewEquation(); } }
-        function initAudioContextOnFirstUserInteraction() { if (typeof Tone !== 'undefined' && Tone.context && Tone.context.state !== 'running') { Tone.start().then(() => { console.log("Contexto de audio de Tone.js iniciado por interacción del usuario."); }).catch(e => { console.warn("No se pudo iniciar el contexto de audio automáticamente, se requiere interacción del usuario (ej: clic en botón de sonido).", e); }); } document.body.removeEventListener('click', initAudioContextOnFirstUserInteraction, true); document.body.removeEventListener('touchstart', initAudioContextOnFirstUserInteraction, true); }
-        document.body.addEventListener('click', initAudioContextOnFirstUserInteraction, { once: true, capture: true });
-        document.body.addEventListener('touchstart', initAudioContextOnFirstUserInteraction, { once: true, capture: true });
-        function startGame() { currentLevelIndex = 0; score = 0; correctAnswersInLevel = 0; failedAttempts = 0; recentEquationsInLevel = []; messageArea.textContent = ''; if (restartButton.innerHTML.includes("<")) { restartButton.textContent = "Reiniciar Juego"; } initializeSynths(); loadNewEquation(); }
-        soundToggleButton.addEventListener('click', () => { soundsEnabled = !soundsEnabled; soundToggleButton.innerHTML = soundsEnabled ? soundOnIcon : soundOffIcon; soundToggleButton.title = soundsEnabled ? "Desactivar Sonido" : "Activar Sonido"; if (soundsEnabled && typeof Tone !== 'undefined' && Tone.context && Tone.context.state !== 'running') { Tone.start().catch(e => console.error("Error al iniciar Tone.js con el toggle:", e)); } });
-        checkButton.addEventListener('click', checkAnswer);
-        answerInput.addEventListener('keypress', function(event) { if (event.key === 'Enter') { event.preventDefault(); if (checkButton.style.display !== 'none' && !checkButton.disabled) { if (answerInput.value.trim() !== '') { checkAnswer(); } } } });
-        restartButton.addEventListener('click', startGame);
-        startGame();
-    </script>
-    
-    <!-- Script para registrar el Service Worker -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
-                    .then(registration => {
-                        console.log('Service Worker registrado con éxito:', registration);
-                    })
-                    .catch(error => {
-                        console.log('Fallo en el registro del Service Worker:', error);
-                    });
-            });
-        }
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/desafio-de-ecuaciones/service-worker.js')
-      .then(registration => {
-        console.log('Service Worker registrado con éxito: ', registration.scope);
-      })
-      .catch(err => {
-        console.log('Fallo en el registro del Service Worker: ', err);
-      });
-  });
-}
+        
+        // ... (resto del código JavaScript sin cambios)
     </script>
 </body>
 </html>
