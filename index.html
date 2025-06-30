@@ -58,13 +58,34 @@
         .fraction .numerator, .fraction .denominator { display: block; padding: 0 0.2em; font-size: 0.85em; line-height: 1.1; color: #5A3E8A; }
         .fraction .numerator { border-bottom: 0.09em solid #5A3E8A; padding-bottom: 0.1em; }
         .fraction .denominator { padding-top: 0.1em; }
-        #soundToggle { position: absolute; top: 10px; right: 10px; background-color: rgba(255,255,255,0.7); border: 1px solid #CBD5E0; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        #soundToggle svg { width: 20px; height: 20px; fill: #4A5568; }
+        /* Botones de la esquina superior derecha */
+        .top-right-button {
+            position: absolute;
+            top: 10px;
+            background-color: rgba(255,255,255,0.7);
+            border: 1px solid #CBD5E0;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        #soundToggle { right: 10px; }
+        #installButton { right: 60px; display: none; } /* Oculto por defecto */
+        .top-right-button svg { width: 20px; height: 20px; fill: #4A5568; }
+
     </style>
 </head>
 <body class="p-2 sm:p-4">
     <div class="game-container w-full max-w-2xl mx-auto relative"> 
-        <button id="soundToggle" title="Activar/Desactivar Sonido"></button>
+        
+        <button id="soundToggle" class="top-right-button" title="Activar/Desactivar Sonido"></button>
+        <!-- Nuevo botón de instalación -->
+        <button id="installButton" class="top-right-button" title="Instalar Aplicación"></button>
+        
         <header class="mb-3 sm:mb-4 text-center mt-1 sm:mt-2">
             <h1 class="title text-2xl sm:text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600">Desafío de Ecuaciones</h1>
         </header>
@@ -103,6 +124,7 @@
         const levelProgress = document.getElementById('levelProgress');
         const restartButton = document.getElementById('restartButton');
         const soundToggleButton = document.getElementById('soundToggle');
+        const installButton = document.getElementById('installButton');
 
         let currentLevelIndex = 0; 
         let score = 0;
@@ -114,10 +136,12 @@
         let failedAttempts = 0;
         let soundsEnabled = true; 
 
-        const soundOnIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5"><path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.318.664-2.66 1.905A9.76 9.76 0 001.5 12c0 .898.121 1.768.35 2.595.341 1.24 1.518 1.905 2.66 1.905H6.44l4.5 4.5c.945.945 2.56.276 2.56-1.06V4.06zM18.584 12c0-1.813-1.162-3.39-2.833-4.029v8.058c1.67-.64 2.833-2.215 2.833-4.029zM20.25 12c0-2.485-1.53-4.623-3.75-5.455v10.91c2.22-.832 3.75-2.97 3.75-5.455z" /></svg>`;
-        const soundOffIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5"><path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.318.664-2.66 1.905A9.76 9.76 0 001.5 12c0 .898.121 1.768.35 2.595.341 1.24 1.518 1.905 2.66 1.905H6.44l4.5 4.5c.945.945 2.56.276 2.56-1.06V4.06zM16.28 12a2.249 2.249 0 00-1.022-.197V14.38c.552.218.978.694.978 1.252a1.118 1.118 0 01-1.118 1.118c-.631 0-1.118-.487-1.118-1.118a1.12 1.12 0 01.336-.783L12 13.175l-.887-.887-1.112 1.112a1.12 1.12 0 01-.783.336c-.631 0-1.118-.487-1.118-1.118a1.12 1.12 0 01.197-1.022L8.22 10.04l7.037-7.037 1.022 1.022-2.25 2.25.027.027a2.249 2.249 0 001.022.197V8.22l2.25-2.25-1.022-1.022-9.287 9.287 1.022 1.022L10.04 12l2.25 2.25-.027-.027zM18.584 12c0-.448-.09-.882-.253-1.287l-1.023 1.023A2.23 2.23 0 0117.25 12c0 .21-.03.413-.085.606l1.023 1.023c.046-.204.062-.407.062-.606.253.405.253 1.287.253 1.287v-1.416A2.23 2.23 0 0117.25 12a2.25 2.25 0 01.062-.606zM20.25 12c0-.823-.225-1.599-.626-2.285l-1.023 1.023A4.473 4.473 0 0118.75 12c0 .514-.09 1.008-.252 1.462l1.023 1.023c.176-.448.279-.92.279-1.462z" /></svg>`;
+        const soundOnIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.318.664-2.66 1.905A9.76 9.76 0 001.5 12c0 .898.121 1.768.35 2.595.341 1.24 1.518 1.905 2.66 1.905H6.44l4.5 4.5c.945.945 2.56.276 2.56-1.06V4.06zM18.584 12c0-1.813-1.162-3.39-2.833-4.029v8.058c1.67-.64 2.833-2.215 2.833-4.029zM20.25 12c0-2.485-1.53-4.623-3.75-5.455v10.91c2.22-.832 3.75-2.97 3.75-5.455z" /></svg>`;
+        const soundOffIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.318.664-2.66 1.905A9.76 9.76 0 001.5 12c0 .898.121 1.768.35 2.595.341 1.24 1.518 1.905 2.66 1.905H6.44l4.5 4.5c.945.945 2.56.276 2.56-1.06V4.06zM16.28 12a2.249 2.249 0 00-1.022-.197V14.38c.552.218.978.694.978 1.252a1.118 1.118 0 01-1.118 1.118c-.631 0-1.118-.487-1.118-1.118a1.12 1.12 0 01.336-.783L12 13.175l-.887-.887-1.112 1.112a1.12 1.12 0 01-.783.336c-.631 0-1.118-.487-1.118-1.118a1.12 1.12 0 01.197-1.022L8.22 10.04l7.037-7.037 1.022 1.022-2.25 2.25.027.027a2.249 2.249 0 001.022.197V8.22l2.25-2.25-1.022-1.022-9.287 9.287 1.022 1.022L10.04 12l2.25 2.25-.027-.027zM18.584 12c0-.448-.09-.882-.253-1.287l-1.023 1.023A2.23 2.23 0 0117.25 12c0 .21-.03.413-.085.606l1.023 1.023c.046-.204.062-.407.062-.606.253.405.253 1.287.253 1.287v-1.416A2.23 2.23 0 0117.25 12a2.25 2.25 0 01.062-.606zM20.25 12c0-.823-.225-1.599-.626-2.285l-1.023 1.023A4.473 4.473 0 0118.75 12c0 .514-.09 1.008-.252 1.462l1.023 1.023c.176-.448.279-.92.279-1.462z" /></svg>`;
+        const installIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1.5a.75.75 0 01.75.75V12h-1.5V2.25A.75.75 0 0112 1.5zM11.25 12v6.438l-3.47-3.47a.75.75 0 00-1.06 1.06l4.5 4.5a.75.75 0 001.06 0l4.5-4.5a.75.75 0 00-1.06-1.06l-3.47 3.47V12h1.5z" /><path d="M3.75 6.75a.75.75 0 000 1.5h16.5a.75.75 0 000-1.5H3.75z" /></svg>`;
 
         soundToggleButton.innerHTML = soundsEnabled ? soundOnIcon : soundOffIcon;
+        installButton.innerHTML = installIcon;
 
         // --- Manejo de Sonidos ---
         let synth, polySynth;
@@ -153,290 +177,60 @@
             }
         }
 
-        // --- Nombres de niveles y mensajes ---
-        const levelNames = [
-            "Aprendiz de Ecuaciones", "Explorador Numérico", "Descifrador de Códigos",
-            "Maestro de la Balanza", "Experto Algebraico", "Genio de las Ecuaciones"
-        ];
-        const levelUpMessages = [
-            "¡Genial! Has superado 'Aprendiz'. ¡A explorar números!",
-            "¡Increíble, Explorador! ¿Listo para descifrar códigos?",
-            "¡Códigos rotos! Ahora, a ser 'Maestro de la Balanza'.",
-            "¡Equilibrio perfecto, Maestro! El 'Experto Algebraico' te espera.",
-            "¡Felicidades, Experto! Un último escalón hacia la genialidad.",
-            "¡ERES UN GENIO DE LAS ECUACIONES! ¡Desafío completado!"
-        ];
-        const correctMessages = [
-            "¡Correcto!", "¡Muy bien!", "¡Excelente!", "¡Así se hace!", "¡Perfecto!"
-        ];
-
-        // --- Funciones de Lógica del Juego ---
+        // --- El resto del código JS (generadores de ecuaciones, lógica de juego, etc.) va aquí ---
+        // ... (el código JavaScript que ya teníamos, sin cambios) ...
+        const levelNames = [ "Aprendiz de Ecuaciones", "Explorador Numérico", "Descifrador de Códigos", "Maestro de la Balanza", "Experto Algebraico", "Genio de las Ecuaciones" ];
+        const levelUpMessages = [ "¡Genial! Has superado 'Aprendiz'. ¡A explorar números!", "¡Increíble, Explorador! ¿Listo para descifrar códigos?", "¡Códigos rotos! Ahora, a ser 'Maestro de la Balanza'.", "¡Equilibrio perfecto, Maestro! El 'Experto Algebraico' te espera.", "¡Felicidades, Experto! Un último escalón hacia la genialidad.", "¡ERES UN GENIO DE LAS ECUACIONES! ¡Desafío completado!" ];
+        const correctMessages = [ "¡Correcto!", "¡Muy bien!", "¡Excelente!", "¡Así se hace!", "¡Perfecto!" ];
         function randomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
         function randomNonZeroInt(min, max) { let num; do { num = randomInt(min, max); } while (num === 0); return num; }
-        
-        function generateLevel1Equation() {
-            let a, b, x_sol, eqStr; const type = randomInt(1, 4);
-            switch (type) {
-                case 1: a = randomInt(1, 10); b = randomInt(1, 10); x_sol = b + a; eqStr = `x - ${a} = ${b}`; break;
-                case 2: a = randomInt(1, 10); b = randomInt(1, 10); x_sol = a + b; eqStr = `${a} = x - ${b}`; break;
-                case 3: a = randomInt(1, 9); b = randomInt(a + 1, 10); x_sol = b - a; eqStr = `x + ${a} = ${b}`; break;
-                default: b = randomInt(1, 9); a = randomInt(b + 1, 10); x_sol = a - b; eqStr = `${a} = x + ${b}`; break;
-            } return { equationString: eqStr, solution: x_sol };
-        }
-        
-        function generateLevel2Equation() {
-            let a, b, x_sol, eqStr; const type = randomInt(1, 2);
-            if (type === 1) { x_sol = randomInt(1, 10); a = randomInt(2, 5); b = a * x_sol; eqStr = `${a}x = ${b}`; } 
-            else { b = randomInt(1, 8); a = randomInt(2, 5); x_sol = a * b;
-                eqStr = `<span class="fraction"><span class="numerator">x</span><span class="denominator">${a}</span></span> = ${b}`; }
-            return { equationString: eqStr, solution: x_sol };
-        }
-        
-        function generateLevel3Equation() {
-            let a, b, x_sol, eqStr; const type = randomInt(1, 3); x_sol = randomInt(-10, 10);
-            switch (type) {
-                case 1: a = randomInt(-10, 10); b = x_sol + a; eqStr = `x ${a < 0 ? '-' : '+'} ${Math.abs(a)} = ${b}`; break;
-                case 2: a = randomInt(-10, 10); b = a - x_sol; eqStr = `${a} - x = ${b}`; break;
-                default: a = randomInt(-10, 10); b = a + x_sol; 
-                    if (a === b && x_sol === 0) { let new_a = randomNonZeroInt(-5,5); b = new_a + x_sol; eqStr = `${new_a} + x = ${b}`; } 
-                    else { eqStr = `${a} + x = ${b}`; } break;
-            } return { equationString: eqStr.replace(/\+ -/g, '- '), solution: x_sol };
-        }
-
-        function generateLevel4Equation() {
-            let a_coeff, b_rhs, x_sol, eqStr; const type = randomInt(1, 3); x_sol = randomNonZeroInt(-10, 10);
-            switch (type) {
-                case 1: a_coeff = randomNonZeroInt(-5, 5); if (a_coeff === 1) a_coeff = 2; if (a_coeff === -1) a_coeff = -2; b_rhs = a_coeff * x_sol; eqStr = `${a_coeff}x = ${b_rhs}`; break;
-                case 2: 
-                    a_coeff = randomNonZeroInt(-5, 5); if (a_coeff === 1 || a_coeff === -1) a_coeff = (a_coeff === 1 ? 2 : -2);
-                    if (x_sol % a_coeff !== 0) { x_sol = a_coeff * randomNonZeroInt(-5,5); if (x_sol === 0) x_sol = a_coeff * (randomNonZeroInt(-5,5) || 1) ;}
-                    b_rhs = x_sol / a_coeff;
-                    let denominator_lvl4_t2_val = Math.abs(a_coeff); let rhs_lvl4_t2_val = (a_coeff < 0) ? -b_rhs : b_rhs;
-                    eqStr = `<span class="fraction"><span class="numerator">x</span><span class="denominator">${denominator_lvl4_t2_val}</span></span> = ${rhs_lvl4_t2_val}`; break;
-                case 3: default:
-                    let num_c = randomNonZeroInt(-6, 6); let den_c = randomNonZeroInt(2, 6); 
-                    do { x_sol = randomNonZeroInt(-10, 10); } while ((num_c * x_sol) % den_c !== 0);
-                    let rhs_c = (num_c * x_sol) / den_c; let x_term_str_c = (num_c === 1 ? "x" : num_c === -1 ? "-x" : `${num_c}x`);
-                    eqStr = `<span class="fraction"><span class="numerator">${x_term_str_c}</span><span class="denominator">${den_c}</span></span> = ${rhs_c}`; break;
-            } return { equationString: eqStr, solution: x_sol };
-        }
-
-        function termToString(coeff, variable, isFirstTerm) {
-            if (coeff === 0) return ""; 
-            const isNegative = coeff < 0;
-            const absCoeff = Math.abs(coeff);
-            let sign = isFirstTerm ? (isNegative ? "-" : "") : (isNegative ? " - " : " + ");
-            let numStr = "";
-            if (variable) {
-                numStr = (absCoeff === 1) ? "" : absCoeff;
-            } else {
-                numStr = absCoeff;
-            }
-            return `${sign}${numStr}${variable || ""}`;
-        }
-        function buildSideString(terms) {
-            let sideStr = "";
-            if (terms.length === 0) return "0";
-            for (let i = 0; i < terms.length; i++) {
-                sideStr += termToString(terms[i].coeff, terms[i].variable, i === 0);
-            }
-            if (sideStr.trim().startsWith("+ ")) {
-                sideStr = sideStr.trim().substring(2);
-            }
-            return sideStr.trim() === "" ? "0" : sideStr.trim();
-        }
-
-        function generateLevel5Equation() {
-            let x_sol = randomInt(-8, 8); 
-            let final_coeff_x = randomNonZeroInt(-5, 5); 
-            let a = randomInt(-7, 7); let b = randomInt(-7, 7); 
-            if (a === 0 && b === 0) a = randomNonZeroInt(-3, 3);
-            let c_val = randomInt(-10, 10);
-            let d = a + b - final_coeff_x; 
-            // CORRECCIÓN LÓGICA: (a+b-d)X = e-c => final_coeff_x * x_sol = e - c => e = c + (final_coeff_x * x_sol)
-            let e_val = c_val + (final_coeff_x * x_sol);
-            const lhs_terms = []; if (a !== 0) lhs_terms.push({coeff: a, variable: 'x'}); if (b !== 0) lhs_terms.push({coeff: b, variable: 'x'});
-            if (c_val !== 0 || lhs_terms.length === 0) lhs_terms.push({coeff: c_val, variable: null});
-            const rhs_terms = []; if (d !== 0) rhs_terms.push({coeff: d, variable: 'x'});
-            if (e_val !== 0 || rhs_terms.length === 0) rhs_terms.push({coeff: e_val, variable: null});
-            let lhs_str = buildSideString(lhs_terms); let rhs_str = buildSideString(rhs_terms);
-            if (lhs_str === rhs_str && final_coeff_x === 0) return generateLevel5Equation();
-            return { equationString: `${lhs_str} = ${rhs_str}`, solution: x_sol };
-        }
-        function generateLevel6Equation() {
-            let x_sol = randomInt(-10, 10) / 2.0; 
-            if (x_sol === 0) x_sol = 0.5;
-            let final_coeff_x = randomNonZeroInt(-4, 4) * 2;
-            let a = parseFloat((randomInt(-6, 6) + (Math.random() < 0.4 ? 0.5 * (Math.random() < 0.5 ? 1 : -1) : 0)).toFixed(1));
-            let b = parseFloat((randomInt(-6, 6) + (Math.random() < 0.4 ? 0.5 * (Math.random() < 0.5 ? 1 : -1) : 0)).toFixed(1));
-            if (a === 0 && b === 0) a = 1.0;
-            let c_val = parseFloat((randomInt(-10, 10) + (Math.random() < 0.4 ? 0.5 * (Math.random() < 0.5 ? 1 : -1) : 0)).toFixed(1));
-            let d = parseFloat((a + b - final_coeff_x).toFixed(1));
-            let e_val = parseFloat((c_val + (final_coeff_x * x_sol)).toFixed(1));
-            const lhs_terms = []; if (a !== 0) lhs_terms.push({coeff: a, variable: 'x'}); if (b !== 0) lhs_terms.push({coeff: b, variable: 'x'});
-            if (c_val !== 0 || lhs_terms.length === 0) lhs_terms.push({coeff: c_val, variable: null});
-            const rhs_terms = []; if (d !== 0) rhs_terms.push({coeff: d, variable: 'x'});
-            if (e_val !== 0 || rhs_terms.length === 0) rhs_terms.push({coeff: e_val, variable: null});
-            let lhs_str = buildSideString(lhs_terms); let rhs_str = buildSideString(rhs_terms);
-            if (lhs_str === rhs_str && final_coeff_x === 0) return generateLevel6Equation();
-            return { equationString: `${lhs_str} = ${rhs_str}`, solution: x_sol };
-        }
-
-        const equationGenerators = [
-            generateLevel1Equation, generateLevel2Equation, generateLevel3Equation,
-            generateLevel4Equation, generateLevel5Equation, generateLevel6Equation
-        ];
-
-        function loadNewEquation() {
-            failedAttempts = 0; 
-            if (currentLevelIndex > MAX_LEVEL_INDEX) {
-                checkButton.style.display = 'none';
-                answerInput.disabled = true;
-                return;
-            }
-
-            const generator = equationGenerators[currentLevelIndex];
-            let tempEquation; let attempts = 0; const MAX_GENERATION_ATTEMPTS = 20; 
-            do {
-                tempEquation = generator(); attempts++;
-                if (attempts > MAX_GENERATION_ATTEMPTS) { console.warn("Máximo de intentos para generar ecuación única."); break; }
-            } while (recentEquationsInLevel.includes(tempEquation.equationString));
-            
-            currentEquation = tempEquation;
-            recentEquationsInLevel.push(currentEquation.equationString); 
-            equationContainer.innerHTML = currentEquation.equationString; 
-            levelNameDisplay.textContent = levelNames[currentLevelIndex]; 
-            levelNameDisplay.className = `level-title-badge level-${currentLevelIndex}`; 
-            scoreDisplay.textContent = score;
-            updateProgressBar();
-
-            answerInput.value = ''; answerInput.disabled = false;
-            answerInput.classList.remove('correct', 'incorrect'); answerInput.focus();
-            
-            if (!messageArea.textContent.includes("¡Nivel") && !messageArea.textContent.includes("¡ERES UN GENIO")) {
-                 messageArea.textContent = '';
-            }
-             messageArea.className = 'message-box-style my-2 sm:my-3 text-center text-base sm:text-lg md:text-xl p-2 sm:p-3';
-            
-            checkButton.style.display = 'inline-block'; checkButton.disabled = false;
-        }
-
-        function checkAnswer() {
-            const userAnswerStr = answerInput.value.trim().replace(',', '.'); 
-            const userAnswer = parseFloat(userAnswerStr);
-
-            if (isNaN(userAnswer)) {
-                messageArea.textContent = "Por favor, introduce un número válido.";
-                messageArea.className = 'message-box-style my-2 sm:my-3 text-center text-base sm:text-lg md:text-xl p-2 sm:p-3 text-orange-600';
-                answerInput.classList.add('incorrect'); return;
-            }
-
-            const isCorrect = Math.abs(userAnswer - currentEquation.solution) < 0.001;
-
-            if (isCorrect) {
-                score += 10; correctAnswersInLevel++;
-                failedAttempts = 0; 
-                const randomCorrectMsg = correctMessages[Math.floor(Math.random() * correctMessages.length)];
-                messageArea.textContent = randomCorrectMsg;
-                messageArea.className = 'message-box-style my-2 sm:my-3 text-center text-base sm:text-lg md:text-xl p-2 sm:p-3 text-green-600 font-semibold';
-                answerInput.classList.remove('incorrect'); answerInput.classList.add('correct');
-                answerInput.disabled = true;
-                checkButton.disabled = true; 
-                playSound('correct');
-                updateProgressBar();
-                setTimeout(() => {
-                    handleNextEquation();
-                }, 1500);
-
-            } else { 
-                if (score > 0 && score % 5 === 0 && score >=2) score -=2; 
-                if (score < 0) score = 0;
-                scoreDisplay.textContent = score;
-                playSound('wrong'); 
-
-                failedAttempts++;
-                answerInput.classList.remove('correct');
-                answerInput.classList.add('incorrect');
-                answerInput.focus(); 
-
-                if (failedAttempts >= 3) {
-                    messageArea.innerHTML = `La respuesta correcta era <strong class="text-indigo-600">${currentEquation.solution}</strong>. <br>¡No te rindas, a por la siguiente!`;
-                    messageArea.className = 'message-box-style my-2 sm:my-3 text-center text-base sm:text-lg md:text-xl p-2 sm:p-3 text-red-600';
-                    answerInput.disabled = true;
-                    checkButton.disabled = true; 
-
-                    setTimeout(() => {
-                        answerInput.disabled = false; 
-                        handleNextEquation(); 
-                    }, 4000); 
-                } else {
-                    messageArea.textContent = `Incorrecto (intento ${failedAttempts}/3). ¡Sigue intentando!`;
-                    messageArea.className = 'message-box-style my-2 sm:my-3 text-center text-base sm:text-lg md:text-xl p-2 sm:p-3 text-red-600';
-                    checkButton.disabled = false; 
-                }
-            }
-        }
-        
-        function updateProgressBar() {
-            const progressPercent = (correctAnswersInLevel / equationsPerLevel) * 100;
-            levelProgress.style.width = `${progressPercent}%`;
-            levelProgress.textContent = `${correctAnswersInLevel}/${equationsPerLevel}`;
-        }
-
-        function handleNextEquation() { 
-            if (correctAnswersInLevel >= equationsPerLevel) { 
-                playSound('levelUp');
-                messageArea.textContent = levelUpMessages[currentLevelIndex]; 
-                messageArea.className = 'message-box-style my-2 sm:my-3 text-center text-xl sm:text-2xl md:text-3xl p-2 sm:p-3 text-purple-600 font-bold'; 
-
-                currentLevelIndex++; 
-                correctAnswersInLevel = 0; 
-                recentEquationsInLevel = []; 
-                
-                if (currentLevelIndex <= MAX_LEVEL_INDEX) {
-                    setTimeout(loadNewEquation, 3500); 
-                } else { 
-                    checkButton.style.display = 'none';
-                    answerInput.disabled = true;
-                }
-            } else { 
-                loadNewEquation();
-            }
-        }
-
-        function startGame() {
-            currentLevelIndex = 0; score = 0; correctAnswersInLevel = 0;
-            failedAttempts = 0; 
-            recentEquationsInLevel = []; 
-            messageArea.textContent = ''; 
-            loadNewEquation(); 
-        }
-        
-        soundToggleButton.addEventListener('click', async () => {
-            if (!audioReady) {
-                await initializeAudio();
-            }
-            soundsEnabled = !soundsEnabled;
-            soundToggleButton.innerHTML = soundsEnabled ? soundOnIcon : soundOffIcon;
-            soundToggleButton.title = soundsEnabled ? "Desactivar Sonido" : "Activar Sonido";
-        });
-
-
-        checkButton.addEventListener('click', async () => {
-            if (!audioReady) await initializeAudio();
-            checkAnswer();
-        });
-        answerInput.addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault(); 
-                if (checkButton.style.display !== 'none' && !checkButton.disabled) {
-                    if (answerInput.value.trim() !== '') { 
-                        checkButton.click(); // Simular clic para activar audio si es necesario
-                    }
-                }
-            }
-        });
+        function generateLevel1Equation() { let a, b, x_sol, eqStr; const type = randomInt(1, 4); switch (type) { case 1: a = randomInt(1, 10); b = randomInt(1, 10); x_sol = b + a; eqStr = `x - ${a} = ${b}`; break; case 2: a = randomInt(1, 10); b = randomInt(1, 10); x_sol = a + b; eqStr = `${a} = x - ${b}`; break; case 3: a = randomInt(1, 9); b = randomInt(a + 1, 10); x_sol = b - a; eqStr = `x + ${a} = ${b}`; break; default: b = randomInt(1, 9); a = randomInt(b + 1, 10); x_sol = a - b; eqStr = `${a} = x + ${b}`; break; } return { equationString: eqStr, solution: x_sol }; }
+        function generateLevel2Equation() { let a, b, x_sol, eqStr; const type = randomInt(1, 2); if (type === 1) { x_sol = randomInt(1, 10); a = randomInt(2, 5); b = a * x_sol; eqStr = `${a}x = ${b}`; } else { b = randomInt(1, 8); a = randomInt(2, 5); x_sol = a * b; eqStr = `<span class="fraction"><span class="numerator">x</span><span class="denominator">${a}</span></span> = ${b}`; } return { equationString: eqStr, solution: x_sol }; }
+        function generateLevel3Equation() { let a, b, x_sol, eqStr; const type = randomInt(1, 3); x_sol = randomInt(-10, 10); switch (type) { case 1: a = randomInt(-10, 10); b = x_sol + a; eqStr = `x ${a < 0 ? '-' : '+'} ${Math.abs(a)} = ${b}`; break; case 2: a = randomInt(-10, 10); b = a - x_sol; eqStr = `${a} - x = ${b}`; break; default: a = randomInt(-10, 10); b = a + x_sol; if (a === b && x_sol === 0) { let new_a = randomNonZeroInt(-5,5); b = new_a + x_sol; eqStr = `${new_a} + x = ${b}`; } else { eqStr = `${a} + x = ${b}`; } break; } return { equationString: eqStr.replace(/\+ -/g, '- '), solution: x_sol }; }
+        function generateLevel4Equation() { let a_coeff, b_rhs, x_sol, eqStr; const type = randomInt(1, 3); x_sol = randomNonZeroInt(-10, 10); switch (type) { case 1: a_coeff = randomNonZeroInt(-5, 5); if (a_coeff === 1) a_coeff = 2; if (a_coeff === -1) a_coeff = -2; b_rhs = a_coeff * x_sol; eqStr = `${a_coeff}x = ${b_rhs}`; break; case 2: a_coeff = randomNonZeroInt(-5, 5); if (a_coeff === 1 || a_coeff === -1) a_coeff = (a_coeff === 1 ? 2 : -2); if (x_sol % a_coeff !== 0) { x_sol = a_coeff * randomNonZeroInt(-5,5); if (x_sol === 0) x_sol = a_coeff * (randomNonZeroInt(-5,5) || 1) ;} b_rhs = x_sol / a_coeff; let denominator_lvl4_t2_val = Math.abs(a_coeff); let rhs_lvl4_t2_val = (a_coeff < 0) ? -b_rhs : b_rhs; eqStr = `<span class="fraction"><span class="numerator">x</span><span class="denominator">${denominator_lvl4_t2_val}</span></span> = ${rhs_lvl4_t2_val}`; break; case 3: default: let num_c = randomNonZeroInt(-6, 6); let den_c = randomNonZeroInt(2, 6); do { x_sol = randomNonZeroInt(-10, 10); } while ((num_c * x_sol) % den_c !== 0); let rhs_c = (num_c * x_sol) / den_c; let x_term_str_c = (num_c === 1 ? "x" : num_c === -1 ? "-x" : `${num_c}x`); eqStr = `<span class="fraction"><span class="numerator">${x_term_str_c}</span><span class="denominator">${den_c}</span></span> = ${rhs_c}`; break; } return { equationString: eqStr, solution: x_sol }; }
+        function termToString(coeff, variable, isFirstTerm) { if (coeff === 0) return ""; const isNegative = coeff < 0; const absCoeff = Math.abs(coeff); let sign = isFirstTerm ? (isNegative ? "-" : "") : (isNegative ? " - " : " + "); let numStr = ""; if (variable) { numStr = (absCoeff === 1) ? "" : absCoeff; } else { numStr = absCoeff; } return `${sign}${numStr}${variable || ""}`; }
+        function buildSideString(terms) { let sideStr = ""; if (terms.length === 0) return "0"; for (let i = 0; i < terms.length; i++) { sideStr += termToString(terms[i].coeff, terms[i].variable, i === 0); } if (sideStr.trim().startsWith("+ ")) { sideStr = sideStr.trim().substring(2); } return sideStr.trim() === "" ? "0" : sideStr.trim(); }
+        function generateLevel5Equation() { let x_sol = randomInt(-8, 8); let final_coeff_x = randomNonZeroInt(-5, 5); let a = randomInt(-7, 7); let b = randomInt(-7, 7); if (a === 0 && b === 0) a = randomNonZeroInt(-3, 3); let c_val = randomInt(-10, 10); let d = a + b - final_coeff_x; let e_val = c_val + (final_coeff_x * x_sol); const lhs_terms = []; if (a !== 0) lhs_terms.push({coeff: a, variable: 'x'}); if (b !== 0) lhs_terms.push({coeff: b, variable: 'x'}); if (c_val !== 0 || lhs_terms.length === 0) lhs_terms.push({coeff: c_val, variable: null}); const rhs_terms = []; if (d !== 0) rhs_terms.push({coeff: d, variable: 'x'}); if (e_val !== 0 || rhs_terms.length === 0) rhs_terms.push({coeff: e_val, variable: null}); let lhs_str = buildSideString(lhs_terms); let rhs_str = buildSideString(rhs_terms); if (lhs_str === rhs_str && final_coeff_x === 0) return generateLevel5Equation(); return { equationString: `${lhs_str} = ${rhs_str}`, solution: x_sol }; }
+        function generateLevel6Equation() { let x_sol = randomInt(-10, 10) / 2.0; if (x_sol === 0) x_sol = 0.5; let final_coeff_x = randomNonZeroInt(-4, 4) * 2; let a = parseFloat((randomInt(-6, 6) + (Math.random() < 0.4 ? 0.5 * (Math.random() < 0.5 ? 1 : -1) : 0)).toFixed(1)); let b = parseFloat((randomInt(-6, 6) + (Math.random() < 0.4 ? 0.5 * (Math.random() < 0.5 ? 1 : -1) : 0)).toFixed(1)); if (a === 0 && b === 0) a = 1.0; let c_val = parseFloat((randomInt(-10, 10) + (Math.random() < 0.4 ? 0.5 * (Math.random() < 0.5 ? 1 : -1) : 0)).toFixed(1)); let d = parseFloat((a + b - final_coeff_x).toFixed(1)); let e_val = parseFloat((c_val + (final_coeff_x * x_sol)).toFixed(1)); const lhs_terms = []; if (a !== 0) lhs_terms.push({coeff: a, variable: 'x'}); if (b !== 0) lhs_terms.push({coeff: b, variable: 'x'}); if (c_val !== 0 || lhs_terms.length === 0) lhs_terms.push({coeff: c_val, variable: null}); const rhs_terms = []; if (d !== 0) rhs_terms.push({coeff: d, variable: 'x'}); if (e_val !== 0 || rhs_terms.length === 0) rhs_terms.push({coeff: e_val, variable: null}); let lhs_str = buildSideString(lhs_terms); let rhs_str = buildSideString(rhs_terms); if (lhs_str === rhs_str && final_coeff_x === 0) return generateLevel6Equation(); return { equationString: `${lhs_str} = ${rhs_str}`, solution: x_sol }; }
+        const equationGenerators = [ generateLevel1Equation, generateLevel2Equation, generateLevel3Equation, generateLevel4Equation, generateLevel5Equation, generateLevel6Equation ];
+        function loadNewEquation() { failedAttempts = 0; if (currentLevelIndex > MAX_LEVEL_INDEX) { checkButton.style.display = 'none'; answerInput.disabled = true; return; } const generator = equationGenerators[currentLevelIndex]; let tempEquation; let attempts = 0; const MAX_GENERATION_ATTEMPTS = 20; do { tempEquation = generator(); attempts++; if (attempts > MAX_GENERATION_ATTEMPTS) { console.warn("Máximo de intentos para generar ecuación única."); break; } } while (recentEquationsInLevel.includes(tempEquation.equationString)); currentEquation = tempEquation; recentEquationsInLevel.push(currentEquation.equationString); equationContainer.innerHTML = currentEquation.equationString; levelNameDisplay.textContent = levelNames[currentLevelIndex]; levelNameDisplay.className = `level-title-badge level-${currentLevelIndex}`; scoreDisplay.textContent = score; updateProgressBar(); answerInput.value = ''; answerInput.disabled = false; answerInput.classList.remove('correct', 'incorrect'); answerInput.focus(); if (!messageArea.textContent.includes("¡Nivel") && !messageArea.textContent.includes("¡ERES UN GENIO")) { messageArea.textContent = ''; } messageArea.className = 'message-box-style my-2 sm:my-3 text-center text-base sm:text-lg md:text-xl p-2 sm:p-3'; checkButton.style.display = 'inline-block'; checkButton.disabled = false; }
+        function checkAnswer() { const userAnswerStr = answerInput.value.trim().replace(',', '.'); const userAnswer = parseFloat(userAnswerStr); if (isNaN(userAnswer)) { messageArea.textContent = "Por favor, introduce un número válido."; messageArea.className = 'message-box-style my-2 sm:my-3 text-center text-base sm:text-lg md:text-xl p-2 sm:p-3 text-orange-600'; answerInput.classList.add('incorrect'); return; } const isCorrect = Math.abs(userAnswer - currentEquation.solution) < 0.001; if (isCorrect) { score += 10; correctAnswersInLevel++; failedAttempts = 0; const randomCorrectMsg = correctMessages[Math.floor(Math.random() * correctMessages.length)]; messageArea.textContent = randomCorrectMsg; messageArea.className = 'message-box-style my-2 sm:my-3 text-center text-base sm:text-lg md:text-xl p-2 sm:p-3 text-green-600 font-semibold'; answerInput.classList.remove('incorrect'); answerInput.classList.add('correct'); answerInput.disabled = true; checkButton.disabled = true; playSound('correct'); updateProgressBar(); setTimeout(() => { handleNextEquation(); }, 1500); } else { if (score > 0 && score % 5 === 0 && score >=2) score -=2; if (score < 0) score = 0; scoreDisplay.textContent = score; playSound('wrong'); failedAttempts++; answerInput.classList.remove('correct'); answerInput.classList.add('incorrect'); answerInput.focus(); if (failedAttempts >= 3) { messageArea.innerHTML = `La respuesta correcta era <strong class="text-indigo-600">${currentEquation.solution}</strong>. <br>¡No te rindas, a por la siguiente!`; messageArea.className = 'message-box-style my-2 sm:my-3 text-center text-base sm:text-lg md:text-xl p-2 sm:p-3 text-red-600'; answerInput.disabled = true; checkButton.disabled = true; setTimeout(() => { answerInput.disabled = false; handleNextEquation(); }, 4000); } else { messageArea.textContent = `Incorrecto (intento ${failedAttempts}/3). ¡Sigue intentando!`; messageArea.className = 'message-box-style my-2 sm:my-3 text-center text-base sm:text-lg md:text-xl p-2 sm:p-3 text-red-600'; checkButton.disabled = false; } } }
+        function updateProgressBar() { const progressPercent = (correctAnswersInLevel / equationsPerLevel) * 100; levelProgress.style.width = `${progressPercent}%`; levelProgress.textContent = `${correctAnswersInLevel}/${equationsPerLevel}`; }
+        function handleNextEquation() { if (correctAnswersInLevel >= equationsPerLevel) { playSound('levelUp'); messageArea.textContent = levelUpMessages[currentLevelIndex]; messageArea.className = 'message-box-style my-2 sm:my-3 text-center text-xl sm:text-2xl md:text-3xl p-2 sm:p-3 text-purple-600 font-bold'; currentLevelIndex++; correctAnswersInLevel = 0; recentEquationsInLevel = []; if (currentLevelIndex <= MAX_LEVEL_INDEX) { setTimeout(loadNewEquation, 3500); } else { checkButton.style.display = 'none'; answerInput.disabled = true; } } else { loadNewEquation(); } }
+        function startGame() { currentLevelIndex = 0; score = 0; correctAnswersInLevel = 0; failedAttempts = 0; recentEquationsInLevel = []; messageArea.textContent = ''; loadNewEquation(); }
+        soundToggleButton.addEventListener('click', async () => { if (!audioReady) { await initializeAudio(); } soundsEnabled = !soundsEnabled; soundToggleButton.innerHTML = soundsEnabled ? soundOnIcon : soundOffIcon; soundToggleButton.title = soundsEnabled ? "Desactivar Sonido" : "Activar Sonido"; });
+        checkButton.addEventListener('click', async () => { if (!audioReady) await initializeAudio(); checkAnswer(); });
+        answerInput.addEventListener('keypress', function(event) { if (event.key === 'Enter') { event.preventDefault(); if (checkButton.style.display !== 'none' && !checkButton.disabled) { if (answerInput.value.trim() !== '') { checkButton.click(); } } } });
         restartButton.addEventListener('click', startGame);
+
+        // --- PWA Installation Logic ---
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+          // Prevenir que Chrome 67 y anteriores muestren el prompt automáticamente
+          e.preventDefault();
+          // Guardar el evento para poder lanzarlo después
+          deferredPrompt = e;
+          // Mostrar nuestro botón de instalación personalizado
+          installButton.style.display = 'flex';
+          console.log('`beforeinstallprompt` event was fired.');
+        });
+        installButton.addEventListener('click', async () => {
+          // Ocultar nuestro botón, ya no es necesario
+          installButton.style.display = 'none';
+          // Mostrar el diálogo de instalación
+          deferredPrompt.prompt();
+          // Esperar a que el usuario responda
+          const { outcome } = await deferredPrompt.userChoice;
+          console.log(`User response to the install prompt: ${outcome}`);
+          // Ya no necesitaremos el evento guardado
+          deferredPrompt = null;
+        });
+        window.addEventListener('appinstalled', () => {
+          // Ocultar el botón de instalación si la app ya está instalada
+          installButton.style.display = 'none';
+          deferredPrompt = null;
+          console.log('PWA was installed');
+        });
 
         // --- PWA Service Worker Registration ---
         if ('serviceWorker' in navigator) {
