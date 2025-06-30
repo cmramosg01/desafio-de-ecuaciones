@@ -1,74 +1,41 @@
 // service-worker.js
 
-const CACHE_NAME = 'ecuaciones-cache-v1';
-// Lista de archivos que se guardarán en la caché.
+const CACHE_NAME = 'desafio-ecuaciones-cache-v1';
 const urlsToCache = [
   '/',
   '/index.html',
+  '/favicon.ico',
+  '/apple-touch-icon.png',
+  '/favicon-32x32.png',
+  '/favicon-16x16.png',
+  '/android-chrome-192x192.png',
+  '/android-chrome-512x512.png',
   'https://cdn.tailwindcss.com',
-  'https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js',
-  // NOTA: Debes crear la carpeta /images/icons/ y añadir tus propios iconos.
-  // Por ahora, estas rutas pueden dar error si no existen los archivos,
-  // pero el service worker funcionará igualmente con los archivos que sí encuentre.
-  '/images/icons/icon-192x192.png',
-  '/images/icons/icon-512x512.png'
+  'https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js'
 ];
 
-// Evento 'install': se dispara cuando el service worker se instala.
+// Evento de instalación: se abre la caché y se guardan los archivos principales.
 self.addEventListener('install', event => {
-  console.log('Service Worker: Instalando...');
-  // Esperamos a que la promesa de caches.open se resuelva.
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        console.log('Service Worker: Abriendo caché y guardando archivos principales');
+        console.log('Cache abierta');
         return cache.addAll(urlsToCache);
       })
-      .catch(err => {
-        console.error('Service Worker: Falló el cacheo de archivos durante la instalación', err);
-      })
   );
 });
 
-// Evento 'fetch': se dispara cada vez que la página realiza una petición de red.
+// Evento fetch: intercepta las peticiones de red.
 self.addEventListener('fetch', event => {
-  console.log('Service Worker: Interceptando petición fetch para:', event.request.url);
   event.respondWith(
-    // Buscamos si la petición ya está en la caché.
     caches.match(event.request)
       .then(response => {
-        // Si la respuesta está en la caché, la devolvemos.
+        // Si el recurso está en la caché, se devuelve desde ahí.
         if (response) {
-          console.log('Service Worker: Devolviendo desde caché:', event.request.url);
           return response;
         }
-        // Si no está en caché, la buscamos en la red.
-        console.log('Service Worker: Buscando en la red:', event.request.url);
+        // Si no, se pide a la red.
         return fetch(event.request);
       })
-      .catch(err => {
-        console.error('Service Worker: Error en el evento fetch', err);
-      })
-  );
-});
-
-// Evento 'activate': se dispara cuando el service worker se activa.
-// Se usa para limpiar cachés antiguas y asegurar que la PWA usa la versión más reciente.
-self.addEventListener('activate', event => {
-  console.log('Service Worker: Activando...');
-  const cacheWhitelist = [CACHE_NAME];
-
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          // Si la caché no está en nuestra "lista blanca", la borramos.
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
-            console.log('Service Worker: Borrando caché antigua:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
   );
 });

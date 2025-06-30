@@ -345,6 +345,17 @@
                     });
             });
         }
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/desafio-de-ecuaciones/service-worker.js')
+      .then(registration => {
+        console.log('Service Worker registrado con éxito: ', registration.scope);
+      })
+      .catch(err => {
+        console.log('Fallo en el registro del Service Worker: ', err);
+      });
+  });
+}
     </script>
 </body>
 </html>
